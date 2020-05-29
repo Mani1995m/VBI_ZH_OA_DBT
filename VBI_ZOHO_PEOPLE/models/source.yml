@@ -1,0 +1,18 @@
+version : 2
+
+sources:
+  - name : ZOHO_PEOPLE_VIEW
+    database: ZOHO_OA_EDW
+    schema: RAW_ZOHO
+    tables:
+      - name : TB_HIST_REPORTING_CHANGES_VIEW
+      - name : TB_HIST_LEAVE_APPROVER_VIEW
+      - name : TB_HIST_ASSOCIATE_VIEW
+      - name : TB_HIST_P_EMPLOYEEVIEW
+      - name : TB_HIST_EMPLOYEEINACTIVEVIEW
+      - name : TB_HIST_P_APPLYLEAVEVIEW
+      - name : TB_HIST_P_DEPARTMENTVIEW
+      - name : TB_HIST_P_DESIGNATIONVIEW
+      - name : TB_HIST_PROJECT_DEPARTMENT_CHANGES_VIEW
+      - name : TB_HIST_P_ATTENDANCEFORM_VIEW
+      
