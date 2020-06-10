@@ -18,7 +18,7 @@
     use schema RAW_ZOHO;
     {% for view in view_list %}
         merge into "ZOHO_OA_EDW"."RAW_ZOHO"."TB_HIST_{{view|upper}}" as target using
-            (select convert_timezone('UTC', current_timestamp(2))::timestamp_ntz as "RECORD_CAPTURED_AT", $1 as "SRC1" from @STAGE_ZH_DELTA/{{view}}.json.gz (file_format=> FF_JSON_ZOHO)) as sources on
+            (select convert_timezone('UTC', current_timestamp(2))::timestamp_ntz as "RECORD_CAPTURED_AT", $1 as "SRC1" from @STAGE_ZH_DELTA_BLOB/{{view}}.json (file_format=> FF_JSON_ZOHO)) as sources on
             parse_json(sources."SRC1"):"recordId" = target.SRC:"recordId" 
         when matched then 
             update set target."RECORD_CAPTURED_AT" = sources."RECORD_CAPTURED_AT", target."SRC" = sources."SRC1"
