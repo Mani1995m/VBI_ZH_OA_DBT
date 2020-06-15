@@ -22,7 +22,7 @@
 
 {% set audit_table %}
     {% for view in view_list %}
-        merge into "ZOHO_OA_EDW"."ANALYTICS"."TB_AUDIT_HIST" as target using
+        merge into "ZOHO_OA_EDW"."RAW_ZOHO"."TB_AUDIT_HIST" as target using
             (select max('TB_HIST_{{view|upper}}') as historytable,  max("RECORD_CAPTURED_AT") as lastupdated from "ZOHO_OA_EDW"."RAW_ZOHO"."TB_HIST_{{view|upper}}") as source
             on
             target.historytable = source.historytable
