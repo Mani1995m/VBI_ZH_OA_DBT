@@ -7,7 +7,8 @@
 
 Select 
     SRC:"ApprovalStatus"::varchar(30) as approval_status,
-    SRC:"Associate ID"::varchar(80) as associate_id,
+    -- SRC:"Associate ID"::varchar(80) as associate_id,
+    split_part(SRC:"Associate ID", ' ', -1)::varchar(20) as employee_id,
     SRC:"Current Department"::varchar(30) as current_department,
     SRC:"Current Project"::varchar(15) as current_project,
     SRC:"Current Project Lead"::varchar(80) as current_project_lead,

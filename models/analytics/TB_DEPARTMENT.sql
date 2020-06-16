@@ -7,7 +7,9 @@
 
 select 
     SRC:"ApprovalStatus"::varchar(30) as approval_status,
-    SRC:"Department Head"::varchar(80) as department_head,  
+    -- SRC:"Department Head"::varchar(80) as department_head,
+    split_part(SRC:"Department Head", ' ', -1)::varchar(20) as department_head_id,
+    -- substr(SRC:"Department Head", 1, position(department_head_id, SRC:"Department Head", 1)-1)::varchar(80) as department_head_name,
     SRC:"Department Name"::varchar(30) as department_name,
     SRC:"Parent Department"::varchar(30) as parent_department,
     SRC:"createdTime"::varchar(15) as created_time_int,    

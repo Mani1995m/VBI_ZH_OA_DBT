@@ -8,7 +8,8 @@
 select 
     SRC:"Added By"::varchar(80) as added_by,
     SRC:"ApprovalStatus"::varchar(30) as approval_status,
-    SRC:"Associate ID"::varchar(80) as associate_id,
+    -- SRC:"Associate ID"::varchar(80) as associate_id,
+    split_part(SRC:"Associate ID", ' ', -1)::varchar(20) as employee_id,
     SRC:"Comments"::varchar(1000) as comments,
     SRC:"Current People Manager"::varchar(80) as current_people_manager,
     SRC:"Effective"::Date as effective,
