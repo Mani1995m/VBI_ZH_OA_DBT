@@ -11,7 +11,8 @@ Select
     TRY_TO_TIME(SRC:"Break Time"::String) as break_time,    
     SRC:"Description"::varchar(250) as description,
     TRY_TO_TIME(SRC:"Deviation Time"::String) as deviation_time,
-    SRC:"Employee ID"::varchar(80) as employee_id,
+    split_part(SRC:"Employee ID",' ', -1)::varchar(20) as employee_id,
+    -- SRC:"Employee ID"::varchar(80) as employee_id,
     case
         when length(SRC:"Expected FromTime")=0 then
             to_timestamp('0001-01-01 00:00:00')
