@@ -7,7 +7,8 @@
 
 select 
     SRC:"ApprovalStatus"::varchar(30) as approval_status,
-    SRC:"Associate ID"::varchar(80) as associate_id,
+    -- SRC:"Associate ID"::varchar(80) as associate_id,
+    split_part(SRC:"Associate ID",'-', 1)::varchar(20) as employee_id,
     SRC:"Explain Reason for leave"::varchar(1000) as explain_reason_for_leave,  
     SRC:"From (mm/dd/yyyy)"::Date as from_date,  
     SRC:"Leave type"::varchar(40) as leave_type,

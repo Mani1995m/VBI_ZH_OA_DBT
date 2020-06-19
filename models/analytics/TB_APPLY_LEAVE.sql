@@ -6,7 +6,8 @@
 }}
 
 select
-    SRC:"Added By"::varchar(80) as added_by,
+    -- SRC:"Added By"::varchar(80) as added_by,
+    split_part(SRC:"Added By",'-', 1)::varchar(20) as added_by,
     TO_TIMESTAMP((SRC:"Added time")::String, 'DD-mon-YYYY HH:MI:SS') as added_time,
     SRC:"ApprovalStatus"::String as approvalstatus,
     case
@@ -41,7 +42,8 @@ select
     SRC:"Leave Type"::varchar(40) as leave_type,
     SRC:"Medical certificate"::varchar(150) as medical_certificate,
     SRC:"Medical certificate_downloadUrl"::varchar(150) as medical_certificate_download_url,
-    SRC:"Modified By"::varchar(80) as modified_by,
+    -- SRC:"Modified By"::varchar(80) as modified_by,
+    split_part(SRC:"Modified By",'-', 1)::varchar(20) as modified_by,
     TO_TIMESTAMP((SRC:"Modified time")::String, 'DD-mon-YYYY HH:MI:SS') as modified_time,
     TRY_CAST(SRC:"NP DOR Flag"::String  as Smallint) as notice_period,
     TRY_CAST(SRC:"Number of Days"::String  as Smallint) as no_of_days,

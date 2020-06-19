@@ -5,7 +5,8 @@
 }}
 
 Select 
-    SRC:"Added By"::varchar(80) as added_by,
+    -- SRC:"Added By"::varchar(80) as added_by,
+    split_part(SRC:"Added By",'-', 1)::varchar(20) as added_by,
     TO_TIMESTAMP((SRC:"Added time")::String, 'DD-mon-YYYY HH:MI:SS') as added_time,
     SRC:"ApprovalStatus"::varchar(30) as approvalstatus,
     case 
@@ -22,7 +23,8 @@ Select
     SRC:"EmployeeID"::varchar(15) as employee_id,
     SRC:"First Name"::varchar(50) as first_name,
     SRC:"Last Name"::varchar(50) as last_name,
-    SRC:"Modified By"::varchar(80) as modified_by,
+    -- SRC:"Modified By"::varchar(80) as modified_by,
+    split_part(SRC:"Modified By",'-', 1)::varchar(20) as modified_by,
     TO_TIMESTAMP((SRC:"Modified time")::String, 'DD-mon-YYYY HH:MI:SS') as modified_time,
     SRC:"People Manager"::varchar(80) as people_manager,
     SRC:"Photo"::varchar(150) as photo,
