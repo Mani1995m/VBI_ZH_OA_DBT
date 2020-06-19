@@ -21,7 +21,7 @@ Select
     SRC:"First Name"::varchar(50) as first_name,
     SRC:"Last Name"::varchar(50) as last_name,
     SRC:"Reporting To"::varchar(80) as reporting_to,
-    SRC:"Title"::varchar(80) as title,
+    SRC:"Title"::varchar(80) as designation,
     SRC:"createdTime"::varchar(15) as created_time_int,
     SRC:"modifiedTime"::varchar(15) as modified_time_int,
     to_timestamp_ntz(MODIFIED_TIME_INT::BIGINT,3) as modified_time,
