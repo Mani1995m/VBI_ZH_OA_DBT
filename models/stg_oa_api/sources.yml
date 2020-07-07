@@ -1,0 +1,63 @@
+version: 2
+ 
+sources:
+  - name: open_air
+    # database: |
+    #   {%- if target.name == "dev" -%} raw_dev
+    #   {%- elif target.name == "qa" -%} raw_qa
+    #   {%- elif target.name == "prd" -%} raw
+    #   {%- else -%} invalid_database
+    #   {%- endif -%}
+    database: zoho_oa_edw
+    schema: raw_openair
+    tags:
+      - openair
+ 
+    freshness:
+      warn_after: {count: 10, period: hour}
+      error_after: {count: 30, period: hour}
+    loaded_at_field : last_loaded
+ 
+    tables:
+      - name: timesheet_openair
+        description: "Data Coming from Open Air API - Timesheet Data"
+ 
+        columns:
+          - name: timesheet
+            description: "Raw JSON Timesheet details"
+            tests:
+              - not_null
+ 
+          - name: last_loaded
+            description: 'Last Loaded Time'
+            tests:
+              - not_null
+
+      - name: project_openair
+        description: "Data Coming from Open Air API - Project Data"
+ 
+        columns:
+          - name: project
+            description: "Raw JSON Project details"
+            tests:
+              - not_null
+ 
+          - name: last_loaded
+            description: 'Last Loaded Time'
+            tests:
+              - not_null
+
+      - name: users_openair
+        description: "Data Coming from Open Air API - Users Data"
+ 
+        columns:
+          - name: timesheet
+            description: "Raw JSON Timesheet details"
+            tests:
+              - not_null
+ 
+          - name: last_loaded
+            description: 'Last Loaded Time'
+            tests:
+              - not_null
+
