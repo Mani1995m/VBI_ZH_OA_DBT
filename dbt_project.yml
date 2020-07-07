@@ -5,8 +5,9 @@
 name: 'vbi_zoho_people'
 version: '1.0.0'
 
+
 # This setting configures which "profile" dbt uses for this project.
-profile: 'zohopeople'
+profile: 'visualbi_zoho_oa_dw'
 
 # These configurations specify where dbt should look for different types of files.
 # The `source-paths` config, for example, states that models in this project can be
@@ -34,8 +35,21 @@ models:
   vbi_zoho_people:
       # Applies to all files under models/example/
       analytics:
-        tags: 'zohodataload'
+        schema: analytics
+        tags: 'analytics'
+        materialized : 'table'
+      stg_zoho:
+        schema: stg_zoho
+        tags: 'stage_zoho'
         materialized : 'view'
       raw_zoho:
         tags: 'deltaload'
+        materialized : 'table'
+      stg_oa_api:
+        schema: stg_openair
+        tags: 'stage_openair_api'
+        materialized : 'table'
+      stg_oa_odata:
+        schema: stg_openair_odata
+        tags: 'stage_openair_odata'
         materialized : 'table'
