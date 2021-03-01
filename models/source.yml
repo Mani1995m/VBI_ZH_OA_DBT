@@ -43,6 +43,7 @@ sources:
       - name : TB_HIST_INTERCOMPANY_TRANSFER
       - name : TB_HIST_DESIGNATION
       - name : TB_HIST_DESIGNATION_CHANGE_REQUEST
+      - name : TB_HIST_PROJECT_DEPARTMENT_CHANGES
         freshness:
           warn_after: {count: 12, period: hour}
           error_after: {count: 24, period: hour}
