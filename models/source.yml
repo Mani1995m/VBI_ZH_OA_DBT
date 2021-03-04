@@ -39,6 +39,11 @@ sources:
     tables:
       - name : TB_HIST_EMPLOYEE
       - name : TB_AUDIT_HIST
+      - name : TB_HIST_REPORTING_CHANGES
+      - name : TB_HIST_INTERCOMPANY_TRANSFER
+      - name : TB_HIST_DESIGNATION
+      - name : TB_HIST_DESIGNATION_CHANGE_REQUEST
+      - name : TB_HIST_PROJECT_DEPARTMENT_CHANGES
         freshness:
           warn_after: {count: 12, period: hour}
           error_after: {count: 24, period: hour}
