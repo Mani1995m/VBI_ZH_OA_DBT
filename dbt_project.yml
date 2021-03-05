@@ -53,3 +53,11 @@ models:
         schema: stg_openair_odata
         tags: 'stage_openair_odata'
         materialized : 'table'
+
+vars:
+    zoho_form_list : ['employee',
+                      'Project_Department_Changes',
+                      'designation',
+                      'Designation_Change_Request',
+                      'Intercompany_Transfer',
+                      'Reporting_Changes']
