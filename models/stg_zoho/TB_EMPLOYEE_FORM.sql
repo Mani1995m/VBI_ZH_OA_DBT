@@ -93,7 +93,7 @@ select
     SRC:"Zoho_ID"::varchar(25) as zoho_id,
     IFNULL(SRC:"ZUID"::varchar(25), NULL) as zuid
 
-from {{ source('ZOHO_PEOPLE_FORM', 'TB_HIST_EMPLOYEE_ADF')}} 
+from {{ source('ZOHO_PEOPLE_FORM', 'TB_HIST_EMPLOYEE')}} 
 
 {% if is_incremental() %}
     where modified_time > ( select max(modified_time) from {{ this }} )
