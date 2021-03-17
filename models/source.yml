@@ -44,7 +44,12 @@ sources:
       - name : TB_HIST_DESIGNATION
       - name : TB_HIST_DESIGNATION_CHANGE_REQUEST
       - name : TB_HIST_PROJECT_DEPARTMENT_CHANGES
-      - name : TB_HIST_EMPLOYEE_ADF
+      - name : TB_HIST_EMPLOYEE_PY
+      - name : TB_HIST_REPORTING_CHANGES_PY
+      - name : TB_HIST_INTERCOMPANY_TRANSFER_PY
+      - name : TB_HIST_DESIGNATION_PY
+      - name : TB_HIST_DESIGNATION_CHANGE_REQUEST_PY
+      - name : TB_HIST_PROJECT_DEPARTMENT_CHANGES_PY
         freshness:
           warn_after: {count: 12, period: hour}
           error_after: {count: 24, period: hour}
