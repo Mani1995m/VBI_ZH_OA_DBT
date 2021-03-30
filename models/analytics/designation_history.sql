@@ -1,6 +1,6 @@
 {{
     config (
-        alias = 'tb_designation_change_request',
+        alias = 'tb_employee_designation_history',
         transient = false
     )
 }}
