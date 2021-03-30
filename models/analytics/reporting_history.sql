@@ -1,6 +1,6 @@
 {{
     config (
-        alias = 'tb_reporting_changes',
+        alias = 'tb_employee_reporting_history',
         transient = false
     )
 }}
