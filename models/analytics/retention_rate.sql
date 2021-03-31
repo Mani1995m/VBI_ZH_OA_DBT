@@ -16,7 +16,10 @@ with retention_rate as(
         year(date_of_joining) <> year(date_of_exit)
         and
         month(date_of_joining) <> month(date_of_exit)
+        and 
+        (date_of_joining) <> '0001-01-01'
     group by year_month
+    order by year_month
 
 )
 
