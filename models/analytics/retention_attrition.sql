@@ -1,6 +1,6 @@
 {{
     config (
-        alias = 'tb_retention_rate',
+        alias = 'tb_retention_attrition',
         transient = false
     )
 }}
