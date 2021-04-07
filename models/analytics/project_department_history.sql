@@ -22,8 +22,11 @@ select
     current_proj_department as previous_project,    
     new_proj_department as current_project,
     iff(effective_date='0001-01-01',emp_join_date.date_of_joining, effective_date)   as start_date,
-    
-    COALESCE(DATEADD(day, -1, lead(effective_date) OVER (PARTITION BY employee ORDER BY start_date)),'9999-12-31') as end_date 
+    COALESCE(DATEADD(day, -1, lead(effective_date) OVER (PARTITION BY employee ORDER BY start_date)),current_date() ) as end_date, 
+    datediff(day, start_date, end_date) as no_of_days,
+    datediff(month, start_date, end_date) as no_of_months,
+    datediff(year, start_date, end_date) as no_of_years
+
 
 from 
     proj 
