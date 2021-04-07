@@ -21,9 +21,13 @@ select * from (
         a.approval_status as people_manager_change_approval_status,
         effective as valid_from, 
         coalesce(dateadd(day,-1,lead(effective) 
-        over (partition by a.employee_id order by effective)),'9999-12-31') as valid_to,
+        over (partition by a.employee_id order by effective)),current_date() ) as valid_to,
         will_be_reporting_to as people_manager_id,
-        c.first_name ||' '|| c.last_name as people_manager_name
+        c.first_name ||' '|| c.last_name as people_manager_name,
+
+        datediff(day, valid_from, valid_to) as no_of_days,
+        datediff(month, valid_from, valid_to) as no_of_months,
+        datediff(year, valid_from, valid_to) as no_of_years
         from 
             reporting_changes a
             left outer join
@@ -49,7 +53,11 @@ select * from (
         then b.date_of_joining else b.original_doj_for_transfers end as valid_from,
         dateadd(day,-1,effective) as valid_to,
         people_manager_id,
-        c.first_name ||' '|| c.last_name as people_manager_name
+        c.first_name ||' '|| c.last_name as people_manager_name,
+        datediff(day, valid_from, valid_to) as no_of_days,
+        datediff(month, valid_from, valid_to) as no_of_months,
+        datediff(year, valid_from, valid_to) as no_of_years
+        
         from
             (select 
                 employee_id as employee_zoho_id,
