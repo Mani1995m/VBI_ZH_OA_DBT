@@ -22,7 +22,10 @@ select * from (
         new_designation as designation,											
         effective_from as valid_from,											
         coalesce(dateadd(day,-1,lead(effective_from) 
-        over (partition by a.employee_id order by effective_from)),'9999-12-31') as valid_to
+        over (partition by a.employee_id order by effective_from)),current_date()) as valid_to,
+        datediff(day, valid_from, valid_to) as no_of_days,
+        datediff(month, valid_from, valid_to) as no_of_months,
+        datediff(year, valid_from, valid_to) as no_of_years
         from 
             designation_change_request a										
             left outer join													
@@ -43,7 +46,10 @@ select * from (
         when (b.original_doj_for_transfers = '' or b.original_doj_for_transfers is null) 
         and b.date_of_joining <> '0001-01-01' 		
         then b.date_of_joining else b.original_doj_for_transfers end as valid_from,						
-        dateadd(day,-1,effective_from) as valid_to										
+        dateadd(day,-1,effective_from) as valid_to,
+        datediff(day, valid_from, valid_to) as no_of_days,
+        datediff(month, valid_from, valid_to) as no_of_months,
+        datediff(year, valid_from, valid_to) as no_of_years									
         from														
             (select														
                 employee_id as employee_zoho_id,											

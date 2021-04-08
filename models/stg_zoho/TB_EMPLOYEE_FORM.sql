@@ -18,36 +18,44 @@ select
     IFNULL(SRC:"Associate_Status"::varchar(25), NULL) as associate_status,
     SRC:"CreatedTime"::varchar(15) as created_time_int,
     IFNULL(SRC:"Current_Job_Description"::varchar(250), NULL) as current_job_description,
-    //SRC:"Date_of_End_of_Internship",
+    -- SRC:"Date_of_End_of_Internship",
     case 
         when length(SRC:"Date_of_End_of_Internship") = 0 then
-            to_date('01-Jan-0001', 'DD-Mon-YYYY')
+            NULL
+            -- to_date('01-Jan-0001', 'DD-Mon-YYYY')
         else
             to_date(SRC:"Date_of_End_of_Internship"::String , 'DD-Mon-YYYY')
     end
     as date_of_end_of_internship,
-    //SRC:"Date_of_Start_of_Internship",
+    -- SRC:"Date_of_Start_of_Internship",
     case 
         when length(SRC:"Date_of_Start_of_Internship") = 0 then
-            to_date('01-Jan-0001', 'DD-Mon-YYYY')
+            NULL
+            -- to_date('01-Jan-0001', 'DD-Mon-YYYY')
         else
             to_date(SRC:"Date_of_Start_of_Internship"::String , 'DD-Mon-YYYY')
     end
     as date_of_start_of_internship,
-    
-    //SRC:"Dateofexit",
+    IFNULL(SRC:"Employee_type"::varchar(30), NULL) as employee_type,
+    -- SRC:"Dateofexit",
     case 
-        when length(SRC:"Dateofexit") = 0 then
-            to_date('01-Jan-0001', 'DD-Mon-YYYY')
+        when employee_type = 'Intern' then
+            date_of_end_of_internship
+        when length(SRC:"Dateofexit") = 0 then 
+            NULL
+            -- to_date('01-Jan-0001', 'DD-Mon-YYYY')
         else
             to_date(SRC:"Dateofexit"::String , 'DD-Mon-YYYY')
     end
     as date_of_exit,
     
-    //SRC:"Dateofjoining",
+    -- SRC:"Dateofjoining",
     case 
+        when employee_type = 'Intern' then
+            date_of_start_of_internship
         when length(SRC:"Dateofjoining") = 0 then
-            to_date('01-Jan-0001', 'DD-Mon-YYYY')
+            NULL
+            -- to_date('01-Jan-0001', 'DD-Mon-YYYY')
         else
             to_date(SRC:"Dateofjoining"::String , 'DD-Mon-YYYY')
     end
@@ -59,7 +67,7 @@ select
     SRC:"Designation"::varchar(80) as designation,
     IFNULL(SRC:"Designation.ID"::varchar(25), NULL) as designation_id,
     IFNULL(SRC:"EmailID"::varchar(40), NULL) as email_id,
-    IFNULL(SRC:"Employee_type"::varchar(30), NULL) as employee_type,
+    
     IFNULL(SRC:"EmployeeID"::varchar(15), NULL) as employee_id,
     IFNULL(SRC:"Employeestatus"::varchar(25), NULL) as employee_status,
     IFNULL(SRC:"Exp_in_VBI_Months"::smallint, NULL) as exp_in_vbi_months,
