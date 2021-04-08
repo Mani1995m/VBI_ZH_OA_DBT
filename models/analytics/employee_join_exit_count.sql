@@ -1,16 +1,16 @@
 {{
     config (
-        alias = 'tb_retention_attrition',
+        alias = 'tb_employee_join_exit_count',
         transient = false
     )
 }}
 
 
-with retention_value as( 
+with new_employee_count as( 
     select 
         ( year(date_of_joining) || ' '||  monthname(date_of_joining)) as year_month,
         (year(date_of_joining)*100) + month(date_of_joining) as yr_mon_int,
-        count(employee_id) as retention_rate
+        count(employee_id) as new_employee_count
     from 
         {{  ref('TB_EMPLOYEE_FORM') }}
     where 
@@ -22,11 +22,11 @@ with retention_value as(
     group by year_month,yr_mon_int
 ),
 
-attrition_value as(
+exit_employee_count as(
      select  
         ( year(date_of_exit) || ' '||  monthname(date_of_exit)) as year_month,
         (year(date_of_exit)*100) + month(date_of_exit) as yr_mon_int,
-        count(employee_id) as attrition_rate
+        count(employee_id) as exit_employee_count
     from 
         {{  ref('TB_EMPLOYEE_FORM') }}
     where 
@@ -40,19 +40,19 @@ attrition_value as(
     group by year_month, yr_mon_int
 ),
 
-retention_attrition as(
+employee_join_exit_count as(
     select 
-        ifnull(retention_value.year_month, attrition_value.year_month) as year_month,
-        ifnull(retention_value.yr_mon_int, attrition_value.yr_mon_int) as yr_mon_int,
-        retention_rate,
-        attrition_rate
+        ifnull(new_employee_count.year_month, exit_employee_count.year_month) as year_month,
+        ifnull(new_employee_count.yr_mon_int, exit_employee_count.yr_mon_int) as yr_mon_int,
+        new_employee_count,
+        exit_employee_count
     from 
-        retention_value
+        new_employee_count
     full outer join
-        attrition_value
+        exit_employee_count
         on
-        retention_value.year_month = attrition_value.year_month
+        new_employee_count.year_month = exit_employee_count.year_month
     order by yr_mon_int
 )
 
-select * from retention_attrition
+select * from employee_join_exit_count
