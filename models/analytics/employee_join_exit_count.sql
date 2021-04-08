@@ -14,10 +14,6 @@ with new_employee_count as(
     from 
         {{  ref('TB_EMPLOYEE_FORM') }}
     where 
-        year(date_of_joining) <> year(date_of_exit)
-        and
-        month(date_of_joining) <> month(date_of_exit)
-        and 
         (date_of_joining) <> '0001-01-01'
     group by year_month,yr_mon_int
 ),
@@ -30,13 +26,11 @@ exit_employee_count as(
     from 
         {{  ref('TB_EMPLOYEE_FORM') }}
     where 
-        year(date_of_joining) <> year(date_of_exit)
-        and
-        month(date_of_joining) <> month(date_of_exit)
-        and 
         date_of_exit <> '0001-01-01'
         and
         date_of_exit is not NULL
+        and
+        date_of_joining <> '0001-01-01'
     group by year_month, yr_mon_int
 ),
 
