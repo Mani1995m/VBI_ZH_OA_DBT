@@ -89,11 +89,15 @@ group by MONTH_END_DATE,department,employee_type
 ),
 
 month_start_end as(
-select A.year_month,A.yr_mon_int,
-A.department,A.employee_type,
-A.Active_Emp_Month_Begin,B.Active_Emp_Month_End from
+select 
+A.year_month,
+A.yr_mon_int,
+ifnull(A.department, B.department) as department,
+ifnull(A.employee_type, B.employee_type) as employee_type,
+A.Active_Emp_Month_Begin,
+B.Active_Emp_Month_End from
 month_start_count A
-left join month_end_count B
+full outer  join month_end_count B
 on A.year_month=B.year_month
 and A.department = B.department
 and A.employee_type = B.employee_type
