@@ -10,6 +10,8 @@ with new_employee_count as(
     select 
         ( year(date_of_joining) || ' '||  monthname(date_of_joining)) as year_month,
         (year(date_of_joining)*100) + month(date_of_joining) as yr_mon_int,
+        year(date_of_joining) as year_char,
+        monthname(date_of_joining) as month_char,
         department,
         employee_type,
         count(employee_id) as new_employee_count
@@ -17,13 +19,15 @@ with new_employee_count as(
         {{  ref('TB_EMPLOYEE_FORM') }}
     where 
         (date_of_joining) <> '0001-01-01'
-    group by year_month,yr_mon_int,department,employee_type
+    group by year_month,yr_mon_int,year_char,month_char,department,employee_type
 ),
 
 exit_employee_count as(
      select  
         ( year(date_of_exit) || ' '||  monthname(date_of_exit)) as year_month,
         (year(date_of_exit)*100) + month(date_of_exit) as yr_mon_int,
+        year(date_of_exit) as year_char,
+        monthname(date_of_exit) as month_char,
         department,
         employee_type,
         count(employee_id) as exit_employee_count
@@ -35,13 +39,15 @@ exit_employee_count as(
         date_of_exit is not NULL
         and
         date_of_joining <> '0001-01-01'
-    group by year_month, yr_mon_int,department,employee_type
+    group by year_month, yr_mon_int,year_char,month_char,department,employee_type
 ),
 
 employee_join_exit_count as(
     select 
         ifnull(new_employee_count.year_month, exit_employee_count.year_month) as year_month,
         ifnull(new_employee_count.yr_mon_int, exit_employee_count.yr_mon_int) as yr_mon_int,
+        ifnull(new_employee_count.year_char, exit_employee_count.year_char) as year_char,
+        ifnull(new_employee_count.month_char, exit_employee_count.month_char) as month_char,
         ifnull(new_employee_count.department, exit_employee_count.department) as department,
         ifnull(new_employee_count.employee_type, exit_employee_count.employee_type) as employee_type,
         new_employee_count,
@@ -62,6 +68,8 @@ month_start_count as
 
 select  ( year(MONTH_START_DATE) || ' '||  monthname(MONTH_START_DATE)) as year_month,
         (year(MONTH_START_DATE)*100) + month(MONTH_START_DATE) as yr_mon_int,
+        year(MONTH_START_DATE) AS year_char,
+        monthname(MONTH_START_DATE) as month_char,
         department,
         employee_type,
 count(employee_id) Active_Emp_Month_Begin
@@ -77,6 +85,8 @@ month_end_count as(
 
 select ( year(MONTH_END_DATE) || ' '||  monthname(MONTH_END_DATE)) as year_month,
         (year(MONTH_END_DATE)*100) + month(MONTH_END_DATE) as yr_mon_int,
+         year(MONTH_END_DATE) AS year_char,
+        monthname(MONTH_END_DATE) as month_char,
         department,
         employee_type,
         count(employee_id) Active_Emp_Month_End  
@@ -92,6 +102,8 @@ month_start_end as(
 select 
 A.year_month,
 A.yr_mon_int,
+A.year_char,
+A.month_char,
 ifnull(A.department, B.department) as department,
 ifnull(A.employee_type, B.employee_type) as employee_type,
 A.Active_Emp_Month_Begin,
@@ -107,6 +119,8 @@ final as
 (
 select  A.year_month,
         A.yr_mon_int,
+        A.year_char,
+        A.month_char,
         A.department,
         A.employee_type,
         new_employee_count,
