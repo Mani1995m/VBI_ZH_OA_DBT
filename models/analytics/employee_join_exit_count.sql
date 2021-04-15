@@ -75,7 +75,7 @@ select  ( year(MONTH_START_DATE) || ' '||  monthname(MONTH_START_DATE)) as year_
 count(employee_id) Active_Emp_Month_Begin
 from (select distinct MONTH_START_DATE from "ZOHO_OA_EDW"."ANALYTICS"."DATE_DIM") X
 left join "ZOHO_OA_EDW"."ANALYTICS"."TB_EMPLOYEE"
-on DATE_OF_JOINING<MONTH_START_DATE
+on DATE_OF_JOINING<=MONTH_START_DATE
 and (DATE_OF_EXIT>MONTH_START_DATE OR (DATE_OF_EXIT='0001-01-01'))
 where DATE_OF_JOINING!='0001-01-01'
 group by MONTH_START_DATE,department,employee_type
@@ -92,7 +92,7 @@ select ( year(MONTH_END_DATE) || ' '||  monthname(MONTH_END_DATE)) as year_month
         count(employee_id) Active_Emp_Month_End  
 from (select distinct MONTH_END_DATE from "ZOHO_OA_EDW"."ANALYTICS"."DATE_DIM") X
 left join "ZOHO_OA_EDW"."ANALYTICS"."TB_EMPLOYEE"
-on DATE_OF_JOINING<MONTH_END_DATE
+on DATE_OF_JOINING<=MONTH_END_DATE
 and (DATE_OF_EXIT>MONTH_END_DATE OR (DATE_OF_EXIT='0001-01-01'))
 where DATE_OF_JOINING!='0001-01-01'
 group by MONTH_END_DATE,department,employee_type
