@@ -6,10 +6,10 @@
 }}
 
 with emp as(
-    select * from "TB_EMPLOYEE_FORM"
+    select * from {{  ref('TB_EMPLOYEE_FORM') }}
 ),
 proj as(
-    select * from "TB_PROJECT_DEPARTMENT_CHANGES_FORM"
+    select * from {{ref('TB_PROJECT_DEPARTMENT_CHANGES_FORM')}}
 )
 
 Select * from (
