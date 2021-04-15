@@ -100,16 +100,16 @@ group by MONTH_END_DATE,department,employee_type
 
 month_start_end as(
 select 
-A.year_month,
-A.yr_mon_int,
-A.year_char,
-A.month_char,
+ifnull(A.year_month, B.year_month) as year_month,
+ifnull(A.yr_mon_int, B.yr_mon_int) as yr_mon_int,
+ifnull(A.year_char, B.year_char) as year_char,
+ifnull(A.month_char, B.month_char) as month_char,
 ifnull(A.department, B.department) as department,
 ifnull(A.employee_type, B.employee_type) as employee_type,
 A.Active_Emp_Month_Begin,
 B.Active_Emp_Month_End from
 month_start_count A
-full outer  join month_end_count B
+full outer join month_end_count B
 on A.year_month=B.year_month
 and A.department = B.department
 and A.employee_type = B.employee_type
