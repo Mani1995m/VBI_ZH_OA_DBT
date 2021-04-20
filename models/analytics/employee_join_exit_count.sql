@@ -9,7 +9,7 @@
 with new_employee_count as( 
     select 
         ( year(date_of_joining) || ' '||  monthname(date_of_joining)) as year_month,
-        (year(date_of_joining)*100) + month(date_of_joining) as yr_mon_int,
+        ( year(date_of_joining) || '-' || month(date_of_joining) || '-01' ) as yr_mon_int,
         year(date_of_joining) as year_char,
         monthname(date_of_joining) as month_char,
         department,
@@ -25,7 +25,7 @@ with new_employee_count as(
 exit_employee_count as(
      select  
         ( year(date_of_exit) || ' '||  monthname(date_of_exit)) as year_month,
-        (year(date_of_exit)*100) + month(date_of_exit) as yr_mon_int,
+        ( year(date_of_exit) ||' ' || month(date_of_exit) ||'-01' ) as yr_mon_int,
         year(date_of_exit) as year_char,
         monthname(date_of_exit) as month_char,
         department,
@@ -63,61 +63,78 @@ employee_join_exit_count as(
     order by yr_mon_int
 ),
 
-month_start_count as
-(
-
-select  ( year(MONTH_START_DATE) || ' '||  monthname(MONTH_START_DATE)) as year_month,
+month_start_count as(
+    select  
+        ( year(MONTH_START_DATE) || ' '||  monthname(MONTH_START_DATE)) as year_month,
         (year(MONTH_START_DATE)*100) + month(MONTH_START_DATE) as yr_mon_int,
         year(MONTH_START_DATE) AS year_char,
         monthname(MONTH_START_DATE) as month_char,
         department,
         employee_type,
-count(employee_id) Active_Emp_Month_Begin
-from (select distinct MONTH_START_DATE from "ZOHO_OA_EDW"."ANALYTICS"."DATE_DIM") X
-left join "ZOHO_OA_EDW"."ANALYTICS"."TB_EMPLOYEE"
-on DATE_OF_JOINING<=MONTH_START_DATE
-and (DATE_OF_EXIT>MONTH_START_DATE OR (DATE_OF_EXIT='0001-01-01'))
-where DATE_OF_JOINING!='0001-01-01'
-group by MONTH_START_DATE,department,employee_type
+        count(employee_id) Active_Emp_Month_Begin
+    from 
+        (select distinct MONTH_START_DATE from "ZOHO_OA_EDW"."ANALYTICS"."DATE_DIM") X
+    left join 
+        "ZOHO_OA_EDW"."ANALYTICS"."TB_EMPLOYEE"
+        on 
+        DATE_OF_JOINING<=MONTH_START_DATE
+        and 
+        (DATE_OF_EXIT>MONTH_START_DATE OR (DATE_OF_EXIT='0001-01-01'))
+    where 
+        DATE_OF_JOINING!='0001-01-01'
+    group by 
+        MONTH_START_DATE,department,employee_type
 ),
 
 month_end_count as(
 
-select ( year(MONTH_END_DATE) || ' '||  monthname(MONTH_END_DATE)) as year_month,
+    select 
+        ( year(MONTH_END_DATE) || ' '||  monthname(MONTH_END_DATE)) as year_month,
         (year(MONTH_END_DATE)*100) + month(MONTH_END_DATE) as yr_mon_int,
          year(MONTH_END_DATE) AS year_char,
         monthname(MONTH_END_DATE) as month_char,
         department,
         employee_type,
         count(employee_id) Active_Emp_Month_End  
-from (select distinct MONTH_END_DATE from "ZOHO_OA_EDW"."ANALYTICS"."DATE_DIM") X
-left join "ZOHO_OA_EDW"."ANALYTICS"."TB_EMPLOYEE"
-on DATE_OF_JOINING<=MONTH_END_DATE
-and (DATE_OF_EXIT>MONTH_END_DATE OR (DATE_OF_EXIT='0001-01-01'))
-where DATE_OF_JOINING!='0001-01-01'
-group by MONTH_END_DATE,department,employee_type
+    from 
+        (select distinct MONTH_END_DATE from "ZOHO_OA_EDW"."ANALYTICS"."DATE_DIM") X
+    left join 
+        "ZOHO_OA_EDW"."ANALYTICS"."TB_EMPLOYEE"
+        on 
+        DATE_OF_JOINING<=MONTH_END_DATE
+        and 
+        (DATE_OF_EXIT>MONTH_END_DATE OR (DATE_OF_EXIT='0001-01-01'))
+    where 
+        DATE_OF_JOINING!='0001-01-01'
+    group by 
+        MONTH_END_DATE,department,employee_type
 ),
 
 month_start_end as(
-select 
-ifnull(A.year_month, B.year_month) as year_month,
-ifnull(A.yr_mon_int, B.yr_mon_int) as yr_mon_int,
-ifnull(A.year_char, B.year_char) as year_char,
-ifnull(A.month_char, B.month_char) as month_char,
-ifnull(A.department, B.department) as department,
-ifnull(A.employee_type, B.employee_type) as employee_type,
-A.Active_Emp_Month_Begin,
-B.Active_Emp_Month_End from
-month_start_count A
-full outer join month_end_count B
-on A.year_month=B.year_month
-and A.department = B.department
-and A.employee_type = B.employee_type
+    select 
+        ifnull(A.year_month, B.year_month) as year_month,
+        ifnull(A.yr_mon_int, B.yr_mon_int) as yr_mon_int,
+        ifnull(A.year_char, B.year_char) as year_char,
+        ifnull(A.month_char, B.month_char) as month_char,
+        ifnull(A.department, B.department) as department,
+        ifnull(A.employee_type, B.employee_type) as employee_type,
+        A.Active_Emp_Month_Begin,
+        B.Active_Emp_Month_End 
+    from
+        month_start_count A
+    full outer join 
+        month_end_count B
+    on
+        A.year_month=B.year_month
+        and 
+        A.department = B.department
+        and 
+        A.employee_type = B.employee_type
 ),
 
-final as 
-(
-select  A.year_month,
+final as(
+    select  
+        A.year_month,
         A.yr_mon_int,
         A.year_char,
         A.month_char,
@@ -127,11 +144,20 @@ select  A.year_month,
         exit_employee_count,
         Active_Emp_Month_Begin,
         Active_Emp_Month_End
-from employee_join_exit_count A 
-left join month_start_end B
-on A.year_month=B.year_month
-and A.department = B.department
-and A.employee_type = B.employee_type
+    from 
+        employee_join_exit_count A 
+    left join 
+        month_start_end B
+    on
+        A.year_month=B.year_month
+        and 
+        A.department = B.department
+        and
+        A.employee_type = B.employee_type
 )
-select * from final
-order by yr_mon_int
+select 
+    * 
+from 
+    final
+order by 
+    yr_mon_int
