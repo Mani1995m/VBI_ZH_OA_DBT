@@ -63,3 +63,6 @@ sources:
               
       - name: Weekly_TimeSheets
         description: "Weekly TimeSheets Data from SharePoint"
+    
+      - name: Weekly_TimeSheets_Status
+        description: "Weekly TimeSheets Status from SharePoint"
