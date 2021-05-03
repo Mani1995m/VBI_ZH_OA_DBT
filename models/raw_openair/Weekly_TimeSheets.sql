@@ -7,7 +7,7 @@
 
 {%- call statement('my_statement', fetch_result=True) -%}
       SELECT top 1 case when $2 like '%/%' then right(trim(SPLIT($2,'-')[0]),10) else NULL end
-       FROM @STAGE_OA_TEST/Ingest_SPO/Weekly_Validation_1_report.csv (file_format => FF_CSV_OA)
+       FROM @STAGE_OA_BLOB/vbidw/Openair/Weekly_Validation_1_report.csv (file_format => FF_CSV_OA)
 {%- endcall -%}
 
 
@@ -25,7 +25,7 @@ with Flatten_1 as
      $3 as Submitted_hours,
      $4 as Rejected_hours,
      $5 as Approved_hours
-     FROM @STAGE_OA_TEST/Ingest_SPO/Weekly_Validation_1_report.csv (file_format => FF_CSV_OA)
+     FROM @STAGE_OA_BLOB/vbidw/Openair/Weekly_Validation_1_report.csv (file_format => FF_CSV_OA)
      where $1 not like '%/%' and $1 !='' and $1 is not null
 ),
 
