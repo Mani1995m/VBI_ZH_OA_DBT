@@ -47,13 +47,16 @@ models:
       raw_zoho:
         tags: 'deltaload'
         materialized : 'table'
-      stg_oa_api:
+      stg_oa:
         schema: stg_openair
-        tags: 'stage_openair_api'
+        tags: 'stage_openair'
         materialized : 'table'
       stg_oa_odata:
         schema: stg_openair_odata
         tags: 'stage_openair_odata'
+        materialized : 'table'
+      raw_openair:
+        tags: 'OA_Raw'
         materialized : 'table'
 
 vars:
