@@ -28,7 +28,7 @@ with SubQuery as
         ORDER BY METADATA$FILENAME
     ),'-')[0]),10) WeekStarting,
     convert_timezone('Asia/Calcutta', current_timestamp(2))::timestamp_ntz as Record_captured_at
-     FROM @STAGE_OA_TEST/Ingest_SPO/1__Weekly_Timesheet_Status_Report__Jay_report.csv (file_format => FF_CSV_OA)
+     FROM @STAGE_OA_BLOB/vbidw/Openair/Weekly_Validation_1_report.csv (file_format => FF_CSV_OA)
 ),
 
 
