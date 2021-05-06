@@ -60,14 +60,22 @@ select
             to_date(SRC:"Dateofjoining"::String , 'DD-Mon-YYYY')
     end
     as date_of_joining,
+    case 
+        when length(SRC:"Date_of_birth") = 0 then
+            NULL
+            -- to_date('01-Jan-0001', 'DD-Mon-YYYY')
+        else
+            to_date(SRC:"Date_of_birth"::String , 'DD-Mon-YYYY')
+    end
+    as date_of_birth,
 
 
     IFNULL(SRC:"Department"::varchar, NULL) as department,
     IFNULL(SRC:"Department.ID"::varchar, NULL) as department_id,
     SRC:"Designation"::varchar as designation,
     IFNULL(SRC:"Designation.ID"::varchar, NULL) as designation_id,
-    IFNULL(SRC:"EmailID"::varchar, NULL) as email_id,
     
+    IFNULL(SRC:"EmailID"::varchar, NULL) as email_id,
     IFNULL(SRC:"EmployeeID"::varchar, NULL) as employee_id,
     IFNULL(SRC:"Employeestatus"::varchar, NULL) as employee_status,
     IFNULL(SRC:"Exp_in_VBI_Months"::smallint, NULL) as exp_in_vbi_months,
@@ -86,6 +94,7 @@ select
     SRC:"ModifiedBy.ID"::varchar as modifiedby_id,
     SRC:"ModifiedTime"::varchar as modified_time_int,    
     TO_TIMESTAMP((SRC:"ModifiedTime")::String) as modified_time,
+    IFNULL(SRC:"Mobile"::varchar, NULL) as mobile,
     IFNULL(SRC:"Nick_Name"::varchar, NULL) as nick_name,
     IFNULL(SRC:"Original_DOJ_for_transfers", NULL) as original_doj_for_transfers,
     IFNULL(SRC:"Photo"::varchar, NULL) as photo,
