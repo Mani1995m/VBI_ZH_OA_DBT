@@ -36,6 +36,14 @@ select
             to_date(SRC:"Date_of_Start_of_Internship"::String , 'DD-Mon-YYYY')
     end
     as date_of_start_of_internship,
+        case 
+        when length(SRC:"Date_of_birth") = 0 then
+            NULL
+            -- to_date('01-Jan-0001', 'DD-Mon-YYYY')
+        else
+            to_date(SRC:"Date_of_birth"::String , 'DD-Mon-YYYY')
+    end
+    as date_of_birth,
     IFNULL(SRC:"Employee_type"::varchar, NULL) as employee_type,
     -- SRC:"Dateofexit",
     case 
@@ -60,16 +68,6 @@ select
             to_date(SRC:"Dateofjoining"::String , 'DD-Mon-YYYY')
     end
     as date_of_joining,
-    case 
-        when length(SRC:"Date_of_birth") = 0 then
-            NULL
-            -- to_date('01-Jan-0001', 'DD-Mon-YYYY')
-        else
-            to_date(SRC:"Date_of_birth"::String , 'DD-Mon-YYYY')
-    end
-    as date_of_birth,
-
-
     IFNULL(SRC:"Department"::varchar, NULL) as department,
     IFNULL(SRC:"Department.ID"::varchar, NULL) as department_id,
     SRC:"Designation"::varchar as designation,
@@ -89,12 +87,12 @@ select
     IFNULL(SRC:"LastName"::varchar, NULL) as last_name,
     IFNULL(SRC:"LocationName"::varchar, NULL) as location_name,
     IFNULL(SRC:"LocationName.ID"::varchar, NULL) as location_name_id,
+    IFNULL(SRC:"Mobile"::varchar, NULL) as mobile,
     //SRC:"ModifiedBy" as modifiedby,
     split_part(SRC:"ModifiedBy",'-', 1)::varchar as modified_by,
     SRC:"ModifiedBy.ID"::varchar as modifiedby_id,
     SRC:"ModifiedTime"::varchar as modified_time_int,    
     TO_TIMESTAMP((SRC:"ModifiedTime")::String) as modified_time,
-    IFNULL(SRC:"Mobile"::varchar, NULL) as mobile,
     IFNULL(SRC:"Nick_Name"::varchar, NULL) as nick_name,
     IFNULL(SRC:"Original_DOJ_for_transfers", NULL) as original_doj_for_transfers,
     IFNULL(SRC:"Photo"::varchar, NULL) as photo,
@@ -108,10 +106,41 @@ select
     //SRC:"tabularSections",
     IFNULL(SRC:"Work_location"::varchar, NULL) as work_location,
     IFNULL(SRC:"Work_phone"::varchar, NULL) as work_phone,
+    Past_Exp_Days,
+    Past_Exp_Months,
+    Past_Exp_years,
     SRC:"Zoho_ID"::varchar as zoho_id,
     IFNULL(SRC:"ZUID"::varchar, NULL) as zuid
 
-from {{ source('ZOHO_PEOPLE_FORM', 'TB_HIST_EMPLOYEE')}} 
+from {{ source('ZOHO_PEOPLE_FORM', 'TB_HIST_EMPLOYEE')}} x
+LEFT OUTER JOIN
+(   select employee_id, sum(Past_Exp_days) as Past_Exp_days,
+         sum(Past_Exp_Months) as Past_Exp_Months,
+         sum(Past_Exp_Years) as Past_Exp_years 
+ from
+ (Select IFNULL(SRC:"EmployeeID"::varchar(15), NULL) as employee_id,
+    case 
+        when length(b.value:"FromDate") = 0 then
+            to_date('01-Jan-0001', 'DD-Mon-YYYY')
+        else
+            to_date(b.value:"FromDate"::String , 'DD-Mon-YYYY')
+    end
+    as Past_Exp_From_Date,
+    case 
+        when length(b.value:"Todate") = 0 then
+            to_date('01-Jan-0001', 'DD-Mon-YYYY')
+        else
+            to_date(b.value:"Todate"::String , 'DD-Mon-YYYY')
+    end
+    as Past_Exp_To_Date,
+    datediff(day, Past_Exp_From_Date, Past_Exp_To_Date) as Past_Exp_days,
+    datediff(month, Past_Exp_From_Date, Past_Exp_To_Date) as Past_Exp_months,
+    datediff(year, Past_Exp_From_Date, Past_Exp_To_Date) as Past_Exp_years
+    from {{ source('ZOHO_PEOPLE_FORM', 'TB_HIST_EMPLOYEE')}} a,
+    lateral flatten (input=> a.SRC:"tabularSections":"Work experience")b)
+    group by employee_id)y
+    on x.SRC:"EmployeeID" = y.employee_id
+
 
 {% if is_incremental() %}
     where modified_time > ( select max(modified_time) from {{ this }} )
