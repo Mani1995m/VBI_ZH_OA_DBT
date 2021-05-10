@@ -18,7 +18,7 @@ with new_employee_count as(
     from 
         {{  ref('TB_EMPLOYEE_FORM') }}
     where 
-        (date_of_joining) <> '0001-01-01'
+        (date_of_joining) is not null
     group by year_month,yr_mon_int,year_char,month_char,department,employee_type
 ),
 
@@ -34,11 +34,9 @@ exit_employee_count as(
     from 
         {{  ref('TB_EMPLOYEE_FORM') }}
     where 
-        date_of_exit <> '0001-01-01'
-        and
         date_of_exit is not NULL
         and
-        date_of_joining <> '0001-01-01'
+        date_of_joining is not null
     group by year_month, yr_mon_int,year_char,month_char,department,employee_type
 ),
 
@@ -73,15 +71,15 @@ month_start_count as(
         employee_type,
         count(employee_id) Active_Emp_Month_Begin
     from 
-        (select distinct MONTH_START_DATE from "ZOHO_OA_EDW"."ANALYTICS"."DATE_DIM") X
+        (select distinct MONTH_START_DATE from {{  ref('Date_Dim') }}) X
     left join 
-        "ZOHO_OA_EDW"."ANALYTICS"."TB_EMPLOYEE"
+        {{  ref('TB_EMPLOYEE_FORM') }}
         on 
         DATE_OF_JOINING<=MONTH_START_DATE
         and 
-        (DATE_OF_EXIT>MONTH_START_DATE OR (DATE_OF_EXIT='0001-01-01'))
+        (DATE_OF_EXIT>MONTH_START_DATE OR (DATE_OF_EXIT is null))
     where 
-        DATE_OF_JOINING!='0001-01-01'
+        DATE_OF_JOINING is not null
     group by 
         MONTH_START_DATE,department,employee_type
 ),
@@ -97,15 +95,15 @@ month_end_count as(
         employee_type,
         count(employee_id) Active_Emp_Month_End  
     from 
-        (select distinct MONTH_END_DATE from "ZOHO_OA_EDW"."ANALYTICS"."DATE_DIM") X
+        (select distinct MONTH_END_DATE from {{  ref('Date_Dim') }}) X
     left join 
-        "ZOHO_OA_EDW"."ANALYTICS"."TB_EMPLOYEE"
+        {{  ref('TB_EMPLOYEE_FORM') }}
         on 
         DATE_OF_JOINING<=MONTH_END_DATE
         and 
-        (DATE_OF_EXIT>MONTH_END_DATE OR (DATE_OF_EXIT='0001-01-01'))
+        (DATE_OF_EXIT>MONTH_END_DATE OR (DATE_OF_EXIT is null))
     where 
-        DATE_OF_JOINING!='0001-01-01'
+        DATE_OF_JOINING is not null
     group by 
         MONTH_END_DATE,department,employee_type
 ),
@@ -134,19 +132,19 @@ month_start_end as(
 
 final as(
     select  
-        A.year_month,
-        A.yr_mon_int,
-        A.year_char,
-        A.month_char,
-        A.department,
-        A.employee_type,
+        B.year_month,
+        B.yr_mon_int,
+        B.year_char,
+        B.month_char,
+        B.department,
+        B.employee_type,
         new_employee_count,
         exit_employee_count,
         Active_Emp_Month_Begin,
         Active_Emp_Month_End
     from 
         employee_join_exit_count A 
-    left join 
+    full outer join 
         month_start_end B
     on
         A.year_month=B.year_month
