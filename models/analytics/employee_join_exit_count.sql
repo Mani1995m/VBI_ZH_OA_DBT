@@ -87,7 +87,7 @@ month_start_count as(
 month_end_count as(
 
     select 
-        year(MONTH_END_DATE) || ' '||  monthname(MONTH_END_DATE)) as year_month,
+        year(MONTH_END_DATE) || ' '||  monthname(MONTH_END_DATE) as year_month,
         year(MONTH_END_DATE) ||' ' || month(MONTH_END_DATE) ||'-01'  as yr_mon_int,
         year(MONTH_END_DATE) AS year_char,
         monthname(MONTH_END_DATE) as month_char,
