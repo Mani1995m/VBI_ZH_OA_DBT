@@ -153,9 +153,6 @@ final as(
         and
         A.employee_type = B.employee_type
 )
-select 
-    * 
-from 
-    final
-order by 
-    yr_mon_int
+select * from final
+where yr_mon_int <= CURRENT_DATE
+order by yr_mon_int
