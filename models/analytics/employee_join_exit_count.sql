@@ -25,7 +25,7 @@ with new_employee_count as(
 exit_employee_count as(
      select  
         ( year(date_of_exit) || ' '||  monthname(date_of_exit)) as year_month,
-        ( year(date_of_exit) ||' ' || month(date_of_exit) ||'-01' ) as yr_mon_int,
+        ( year(date_of_exit) ||'-' || month(date_of_exit) ||'-01' ) as yr_mon_int,
         year(date_of_exit) as year_char,
         monthname(date_of_exit) as month_char,
         department,
@@ -64,7 +64,7 @@ employee_join_exit_count as(
 month_start_count as(
     select  
         year(MONTH_START_DATE) || ' '||  monthname(MONTH_START_DATE) as year_month,
-        year(MONTH_START_DATE) ||' ' || month(MONTH_START_DATE) ||'-01'  as yr_mon_int,
+        year(MONTH_START_DATE) ||'-' || month(MONTH_START_DATE) ||'-01'  as yr_mon_int,
         year(MONTH_START_DATE) AS year_char,
         monthname(MONTH_START_DATE) as month_char,
         department, 
@@ -87,8 +87,8 @@ month_start_count as(
 month_end_count as(
 
     select 
-        year(MONTH_END_DATE) || ' '||  monthname(MONTH_END_DATE)) as year_month,
-        year(MONTH_END_DATE) ||' ' || month(MONTH_END_DATE) ||'-01'  as yr_mon_int,
+        year(MONTH_END_DATE) || ' '||  monthname(MONTH_END_DATE) as year_month,
+        year(MONTH_END_DATE) ||'-' || month(MONTH_END_DATE) ||'-01'  as yr_mon_int,
         year(MONTH_END_DATE) AS year_char,
         monthname(MONTH_END_DATE) as month_char,
         department,
