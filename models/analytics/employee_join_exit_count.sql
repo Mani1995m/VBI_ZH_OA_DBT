@@ -67,7 +67,7 @@ month_start_count as(
         (year(MONTH_START_DATE)*100) + month(MONTH_START_DATE) as yr_mon_int,
         year(MONTH_START_DATE) AS year_char,
         monthname(MONTH_START_DATE) as month_char,
-        department,
+        department, 
         employee_type,
         count(employee_id) Active_Emp_Month_Begin
     from 
