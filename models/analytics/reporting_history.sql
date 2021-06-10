@@ -45,15 +45,32 @@ select * from (
         a.employee_id,
         b.first_name ||' '|| b.last_name as employee_name,
         'Approved' as people_manager_change_approval_status,
+
         case 
-            when length(b.original_doj_for_transfers)=0 and (b.date_of_joining = '0001-01-01' or b.date_of_joining is null)
+            when b.original_doj_for_transfers is not null
+                then b.original_doj_for_transfers										
+            when b.date_of_start_of_internship is not null
                 then b.date_of_start_of_internship
-            when length(b.original_doj_for_transfers)=0 and b.date_of_joining <> '0001-01-01'
-                then b.date_of_joining 
-            else
-                b.original_doj_for_transfers::date
+            when b.date_of_joining is not null
+                then b.date_of_joining
+            else 
+                NULL
         end as valid_from,
-        dateadd(day,-1,effective) as valid_to,
+        case
+            when effective is not null 
+                then effective
+            else 
+                NULL
+        end as valid_to,
+        -- case 
+        --     when length(b.original_doj_for_transfers)=0 and (b.date_of_joining = '0001-01-01' or b.date_of_joining is null)
+        --         then b.date_of_start_of_internship
+        --     when length(b.original_doj_for_transfers)=0 and b.date_of_joining <> '0001-01-01'
+        --         then b.date_of_joining 
+        --     else
+        --         b.original_doj_for_transfers::date
+        -- end as valid_from,
+        -- dateadd(day,-1,effective) as valid_to,
         people_manager_id,
         c.first_name ||' '|| c.last_name as people_manager_name,
         datediff(day, valid_from, valid_to) as no_of_days,

@@ -39,14 +39,32 @@ select * from (
         a.employee_id,													
         b.first_name ||' '|| b.last_name as employee_name,									
         'Approved' as designation_change_approval_status,									
-        current_designation as designation,										
-        case when (b.original_doj_for_transfers = '' or b.original_doj_for_transfers is null) 
-        and b.date_of_joining = '0001-01-01'	
-        then b.date_of_start_of_internship										
-        when (b.original_doj_for_transfers = '' or b.original_doj_for_transfers is null) 
-        and b.date_of_joining <> '0001-01-01' 		
-        then b.date_of_joining else b.original_doj_for_transfers end as valid_from,						
-        dateadd(day,-1,effective_from) as valid_to,
+        current_designation as designation,	
+        case 
+            when b.original_doj_for_transfers is not null
+                then b.original_doj_for_transfers										
+            when b.date_of_start_of_internship is not null
+                then b.date_of_start_of_internship
+            when b.date_of_joining is not null
+                then b.date_of_joining
+            else 
+                NULL
+        end as valid_from,
+        case
+            when effective_from is not null 
+                then effective_from
+            else 
+                NULL
+        end as valid_to,
+
+        -- case when (b.original_doj_for_transfers = '' or b.original_doj_for_transfers is null) 
+        -- and b.date_of_joining = '0001-01-01'	
+        -- then b.date_of_start_of_internship										
+        -- when (b.original_doj_for_transfers = '' or b.original_doj_for_transfers is null) 
+        -- and b.date_of_joining <> '0001-01-01' 		
+        -- then b.date_of_joining else b.original_doj_for_transfers end as valid_from,	
+
+        -- dateadd(day,-1,effective_from) as valid_to,
         datediff(day, valid_from, valid_to) as no_of_days,
         datediff(month, valid_from, valid_to) as no_of_months,
         datediff(year, valid_from, valid_to) as no_of_years									
