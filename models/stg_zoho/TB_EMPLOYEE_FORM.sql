@@ -94,7 +94,15 @@ select
     SRC:"ModifiedTime"::varchar as modified_time_int,    
     TO_TIMESTAMP((SRC:"ModifiedTime")::String) as modified_time,
     IFNULL(SRC:"Nick_Name"::varchar, NULL) as nick_name,
-    IFNULL(SRC:"Original_DOJ_for_transfers", NULL) as original_doj_for_transfers,
+    -- IFNULL(SRC:"Original_DOJ_for_transfers", NULL) as original_doj_for_transfers,
+    case 
+        when length(SRC:"Original_DOJ_for_transfers") = 0 then
+            NULL
+            -- to_date('01-Jan-0001', 'DD-Mon-YYYY')
+        else
+            to_date(SRC:"Original_DOJ_for_transfers"::String , 'DD-Mon-YYYY')
+    end
+    as original_doj_for_transfers,
     IFNULL(SRC:"Photo"::varchar, NULL) as photo,
     IFNULL(SRC:"Photo_downloadUrl"::varchar, NULL) as photo_download_url,
     IFNULL(SRC:"Project"::varchar, NULL) as project,

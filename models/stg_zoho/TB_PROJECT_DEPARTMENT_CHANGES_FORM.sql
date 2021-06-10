@@ -27,21 +27,24 @@ select
     SRC:"Description"::varchar(25) as description,
     case 
         when length(SRC:"Effective_Date") = 0 then
-            to_date('01-Jan-0001', 'DD-Mon-YYYY')
+            NULL
+            -- to_date('01-Jan-0001', 'DD-Mon-YYYY')
         else
             to_date(SRC:"Effective_Date"::String , 'DD-Mon-YYYY')
     end
     as Effective_Date, 
     case 
         when length(SRC:"Effective_Date_Project_Lead_Change") = 0 then
-            to_date('01-Jan-0001', 'DD-Mon-YYYY')
+            NULL
+            -- to_date('01-Jan-0001', 'DD-Mon-YYYY')
         else
             to_date(SRC:"Effective_Date_Project_Lead_Change"::String , 'DD-Mon-YYYY')
     end
     as Effective_Date_Project_Lead_Change, 
     case 
         when length(SRC:"Effective_New_Project") = 0 then
-            to_date('01-Jan-0001', 'DD-Mon-YYYY')
+            NULL
+            -- to_date('01-Jan-0001', 'DD-Mon-YYYY')
         else
             to_date(SRC:"Effective_New_Project"::String , 'DD-Mon-YYYY')
     end
