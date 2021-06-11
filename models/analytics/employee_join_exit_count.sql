@@ -75,7 +75,7 @@ month_start_count as(
     left join 
         {{  ref('TB_EMPLOYEE_FORM') }}
         on 
-        DATE_OF_JOINING<=MONTH_START_DATE
+        DATE_OF_JOINING<MONTH_START_DATE
         and 
         (DATE_OF_EXIT>MONTH_START_DATE OR (DATE_OF_EXIT is null))
     where 
@@ -107,7 +107,6 @@ month_end_count as(
     group by 
         MONTH_END_DATE,department,employee_type
 ),
-
 month_start_end as(
     select 
         ifnull(A.year_month, B.year_month) as year_month,
