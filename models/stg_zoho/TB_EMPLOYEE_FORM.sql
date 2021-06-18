@@ -142,7 +142,7 @@ from
                     as Past_Exp_To_Date,
                     datediff(day, Past_Exp_From_Date, Past_Exp_To_Date) as Past_Exp_days,
                     datediff(month, Past_Exp_From_Date, Past_Exp_To_Date) as Past_Exp_months,
-                    datediff(year, Past_Exp_From_Date, Past_Exp_To_Date) as Past_Exp_years
+                    to_number(Past_Exp_months/12,5, 1) as no_of_years as Past_Exp_years
                 from 
                     {{ source('ZOHO_PEOPLE_FORM', 'TB_HIST_EMPLOYEE')}} a,
                     lateral flatten (input=> a.SRC:"tabularSections":"Work experience")b)
