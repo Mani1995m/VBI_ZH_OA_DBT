@@ -33,7 +33,7 @@ Select * from (
         ) as end_date, 
         datediff(day, start_date, end_date) as no_of_days,
         datediff(month, start_date, end_date) as no_of_months,
-        datediff(year, start_date, end_date) as no_of_years
+        to_number(no_of_months/12,5, 1) as no_of_years
 
     from 
         proj 
@@ -71,7 +71,7 @@ Select * from (
             end as end_date,
             datediff(day, start_date, end_date) as no_of_days,
             datediff(month, start_date, end_date) as no_of_months,
-            datediff(year, start_date, end_date) as no_of_years
+            to_number(no_of_months/12,5, 1) as no_of_years
                                     
             from														
                 (select																									

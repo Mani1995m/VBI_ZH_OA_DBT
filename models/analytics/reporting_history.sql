@@ -27,7 +27,7 @@ select * from (
 
         datediff(day, valid_from, valid_to) as no_of_days,
         datediff(month, valid_from, valid_to) as no_of_months,
-        datediff(year, valid_from, valid_to) as no_of_years
+        to_number(no_of_months/12,5, 1) as no_of_years
         from 
             reporting_changes a
             left outer join
@@ -62,20 +62,12 @@ select * from (
             else 
                 NULL
         end as valid_to,
-        -- case 
-        --     when length(b.original_doj_for_transfers)=0 and (b.date_of_joining = '0001-01-01' or b.date_of_joining is null)
-        --         then b.date_of_start_of_internship
-        --     when length(b.original_doj_for_transfers)=0 and b.date_of_joining <> '0001-01-01'
-        --         then b.date_of_joining 
-        --     else
-        --         b.original_doj_for_transfers::date
-        -- end as valid_from,
-        -- dateadd(day,-1,effective) as valid_to,
+
         people_manager_id,
         c.first_name ||' '|| c.last_name as people_manager_name,
         datediff(day, valid_from, valid_to) as no_of_days,
         datediff(month, valid_from, valid_to) as no_of_months,
-        datediff(year, valid_from, valid_to) as no_of_years
+        to_number(no_of_months/12,5, 1) as no_of_years
         
         from
             (select 

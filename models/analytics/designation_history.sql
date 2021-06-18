@@ -25,7 +25,7 @@ select * from (
         over (partition by a.employee_id order by effective_from)),current_date()) as valid_to,
         datediff(day, valid_from, valid_to) as no_of_days,
         datediff(month, valid_from, valid_to) as no_of_months,
-        datediff(year, valid_from, valid_to) as no_of_years
+        to_number(no_of_months/12,5, 1) as no_of_years
         from 
             designation_change_request a										
             left outer join													
@@ -57,17 +57,9 @@ select * from (
                 NULL
         end as valid_to,
 
-        -- case when (b.original_doj_for_transfers = '' or b.original_doj_for_transfers is null) 
-        -- and b.date_of_joining = '0001-01-01'	
-        -- then b.date_of_start_of_internship										
-        -- when (b.original_doj_for_transfers = '' or b.original_doj_for_transfers is null) 
-        -- and b.date_of_joining <> '0001-01-01' 		
-        -- then b.date_of_joining else b.original_doj_for_transfers end as valid_from,	
-
-        -- dateadd(day,-1,effective_from) as valid_to,
         datediff(day, valid_from, valid_to) as no_of_days,
         datediff(month, valid_from, valid_to) as no_of_months,
-        datediff(year, valid_from, valid_to) as no_of_years									
+        to_number(no_of_months/12,5, 1) as no_of_years							
         from														
             (select														
                 employee_id as employee_zoho_id,											
