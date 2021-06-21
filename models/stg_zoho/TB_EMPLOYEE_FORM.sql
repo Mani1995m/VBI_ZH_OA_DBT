@@ -53,16 +53,7 @@ select
     end
     as date_of_exit,
     
-    -- SRC:"Dateofjoining",
-    case 
-        when employee_type = 'Intern' then
-            date_of_start_of_internship
-        when length(SRC:"Dateofjoining") = 0 then
-            NULL
-        else
-            to_date(SRC:"Dateofjoining"::String , 'DD-Mon-YYYY')
-    end
-    as date_of_joining,
+
     IFNULL(SRC:"Department"::varchar, NULL) as department,
     IFNULL(SRC:"Department.ID"::varchar, NULL) as department_id,
     SRC:"Designation"::varchar as designation,
@@ -95,11 +86,33 @@ select
             to_date(SRC:"Original_DOJ_for_transfers"::String , 'DD-Mon-YYYY')
     end
     as original_doj_for_transfers,
+    SRC:"Dateofjoining" as recorded_doj,
+    case 
+        when employee_type in ('Intern','On Contract') then
+            date_of_start_of_internship
+        when original_doj_for_transfers is NOT NULL then
+            original_doj_for_transfers
+        when length(SRC:"Dateofjoining") = 0 then 
+            NULL
+        else
+            to_date(SRC:"Dateofjoining"::String , 'DD-Mon-YYYY')
+    end
+    as date_of_joining,
+    case 
+        when employee_type = 'Intern' then
+            0
+        when employee_status = 'Active' then
+            datediff(month, date_of_joining, current_date)
+        else
+            datediff(month, date_of_joining, date_of_exit)
+    end
+    as vbi_exp_months,
+    to_number(vbi_exp_months/12,5, 1) as vbi_exp_years,
     -- pass experience detail
     Past_Exp_Days,
     Past_Exp_Months,
     Past_Exp_years,
-    ( to_number(experience_in_vbi) + Past_Exp_years ) as past_and_vbi_experience,
+    (vbi_exp_years + coalesce(Past_Exp_years,0) ) as past_and_vbi_experience,
     IFNULL(SRC:"Photo"::varchar, NULL) as photo,
     IFNULL(SRC:"Photo_downloadUrl"::varchar, NULL) as photo_download_url,
     IFNULL(SRC:"Project"::varchar, NULL) as project,
@@ -142,7 +155,7 @@ from
                     as Past_Exp_To_Date,
                     datediff(day, Past_Exp_From_Date, Past_Exp_To_Date) as Past_Exp_days,
                     datediff(month, Past_Exp_From_Date, Past_Exp_To_Date) as Past_Exp_months,
-                    datediff(year, Past_Exp_From_Date, Past_Exp_To_Date) as Past_Exp_years
+                    to_number(Past_Exp_months/12,5, 1) as Past_Exp_years
                 from 
                     {{ source('ZOHO_PEOPLE_FORM', 'TB_HIST_EMPLOYEE')}} a,
                     lateral flatten (input=> a.SRC:"tabularSections":"Work experience")b)
