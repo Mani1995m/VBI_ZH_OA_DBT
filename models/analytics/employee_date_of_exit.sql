@@ -14,6 +14,8 @@ select
     ( year(date_of_exit) || '-' || month(date_of_exit) || '-01' ) as yr_mon_int,
     date_of_exit,
     employee_id,
+    employee_type,
+    employee_status,
     email_id,
     first_name,
     last_name,
