@@ -61,8 +61,8 @@ sources:
             tests:
               - not_null
               
-      - name: Weekly_TimeSheets
+      - name: TB_HIST_WEEKLY_TIMESHEETS
         description: "Weekly TimeSheets Data from SharePoint"
     
-      - name: Weekly_TimeSheets_Status
+      - name: TB_HIST_WEEKLY_TIMESHEETS_STATUS
         description: "Weekly TimeSheets Status from SharePoint"
