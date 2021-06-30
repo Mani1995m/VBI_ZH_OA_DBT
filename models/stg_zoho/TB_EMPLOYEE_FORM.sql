@@ -71,6 +71,7 @@ select
     IFNULL(SRC:"Extension"::varchar, NULL) as extension,
     IFNULL(SRC:"FirstName"::varchar, NULL) as first_name,
     IFNULL(SRC:"LastName"::varchar, NULL) as last_name,
+    employee_id ||'-'||first_name||'-'|| last_name as employee_id_name,
     IFNULL(SRC:"LocationName"::varchar, NULL) as location_name,
     IFNULL(SRC:"LocationName.ID"::varchar, NULL) as location_name_id,
     IFNULL(SRC:"Mobile"::varchar, NULL) as mobile,
