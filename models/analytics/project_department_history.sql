@@ -31,6 +31,7 @@ Select * from (
             ),
             current_date() 
         ) as end_date, 
+        iff(datediff(day, current_date(), end_date) = 0, 'Current',NULL) as current_proj_flag,
         datediff(day, start_date, end_date) as no_of_days,
         datediff(month, start_date, end_date) as no_of_months,
         to_number(no_of_months/12,5, 1) as no_of_years
@@ -69,6 +70,7 @@ Select * from (
                 else 
                     NULL
             end as end_date,
+            iff(datediff(day, current_date(), end_date) = 0, 'Current',NULL) as current_proj_flag,
             datediff(day, start_date, end_date) as no_of_days,
             datediff(month, start_date, end_date) as no_of_months,
             to_number(no_of_months/12,5, 1) as no_of_years

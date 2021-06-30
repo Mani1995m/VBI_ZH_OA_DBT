@@ -23,6 +23,13 @@ select * from (
         effective_from as valid_from,											
         coalesce(dateadd(day,-1,lead(effective_from) 
         over (partition by a.employee_id order by effective_from)),current_date()) as valid_to,
+        iff(datediff(day, current_date(), valid_to) = 0, 'Current',NULL) as current_designation_flag,
+        iff(
+            current_designation_flag is not NULL,
+            to_number(datediff(month, valid_from, valid_to)/12,5, 1),
+            NULL
+        ) 
+        as current_designation_period,
         datediff(day, valid_from, valid_to) as no_of_days,
         datediff(month, valid_from, valid_to) as no_of_months,
         to_number(no_of_months/12,5, 1) as no_of_years
@@ -56,7 +63,13 @@ select * from (
             else 
                 NULL
         end as valid_to,
-
+        iff(datediff(day, current_date(), valid_to) = 0, 'Current',NULL) as current_designation_flag,
+        iff(
+            current_designation_flag is not NULL,
+            to_number(datediff(month, valid_from, valid_to)/12,5, 1),
+            NULL
+        ) 
+        as current_designation_period,
         datediff(day, valid_from, valid_to) as no_of_days,
         datediff(month, valid_from, valid_to) as no_of_months,
         to_number(no_of_months/12,5, 1) as no_of_years							

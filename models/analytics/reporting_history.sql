@@ -22,9 +22,10 @@ select * from (
         effective as valid_from, 
         coalesce(dateadd(day,-1,lead(effective) 
         over (partition by a.employee_id order by effective)),current_date() ) as valid_to,
+        iff(datediff(day, current_date(), valid_to) = 0, 'Current',NULL) as current_reporting_flag,
         will_be_reporting_to as people_manager_id,
         c.first_name ||' '|| c.last_name as people_manager_name,
-
+        people_manager_id ||'-'||c.first_name ||'-'|| c.last_name as people_manager_id_name,
         datediff(day, valid_from, valid_to) as no_of_days,
         datediff(month, valid_from, valid_to) as no_of_months,
         to_number(no_of_months/12,5, 1) as no_of_years
@@ -62,9 +63,10 @@ select * from (
             else 
                 NULL
         end as valid_to,
-
+        iff(datediff(day, current_date(), valid_to) = 0, 'Current',NULL) as current_reporting_flag,
         people_manager_id,
         c.first_name ||' '|| c.last_name as people_manager_name,
+        people_manager_id ||'-'||c.first_name ||'-'|| c.last_name as people_manager_id_name,
         datediff(day, valid_from, valid_to) as no_of_days,
         datediff(month, valid_from, valid_to) as no_of_months,
         to_number(no_of_months/12,5, 1) as no_of_years
