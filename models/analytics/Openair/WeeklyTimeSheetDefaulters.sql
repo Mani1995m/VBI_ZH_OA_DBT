@@ -1,23 +1,43 @@
 {{
     config (
         alias = 'WeeklyTimeSheetDefaulters',
-        materialized = 'view'
+        transient = false
     )
 }}
 
-With WeeklyTimeSheets as 
+With TimeSheetLessThanFortyHours as 
 (
-    SELECT * from {{ ref('stg_oa_weeklytimesheets') }}
+select Employee,Employee_First_Name, Week_starting,Employee_email,
+       sum(Submitted_hours+Approved_hours) as EnteredHours,
+       {{var("Weekly_timesheet_Threshold")}} - sum(Submitted_hours+Approved_hours) as MissedHours
+       from {{ ref('stg_oa_weeklytimesheets') }}
+group by 1,2,3,4
+having sum(Submitted_hours+Approved_hours) < 40
 ),
 
-TimeSheetsLessthan as 
+TimeSheetMissingAndOpen as
 (
-select Employee, Week_starting as WeekStaring,
-       sum(Submitted_hours+Approved_hours) as EnteredHours,
-       40 - sum(Submitted_hours+Approved_hours) as MissingHours
-       from WeeklyTimeSheets
-group by 1,2
-having sum(Submitted_hours+Approved_hours) < 40
+select Employee,Employee_first_name, Week_starting,Employee_id as Employee_email, 0 as EnteredHours, 40 as MissedHours
+from {{ ref('stg_oa_weeklytimesheetstatus')}}
+where Week_starting_Timesheets_status_description in ('Missing','Open')
+),
+
+UnionTimeSheetDefaulters as
+(
+    select * from TimeSheetLessThanFortyHours
+    Union
+    select * from TimeSheetMissingAndOpen
+),
+
+Final as 
+(
+    Select Employee,
+           Employee_first_name as EmployeeFirstName,
+           Employee_email as EmployeeEmailId,
+           Week_starting as WeekStarting,
+           EnteredHours,
+           MissedHours
+           from UnionTimeSheetDefaulters
 )
 
-Select * from TimeSheetsLessthan
+Select * from Final
