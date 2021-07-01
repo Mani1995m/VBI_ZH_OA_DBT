@@ -9,7 +9,7 @@ With TimeSheetLessThanFortyHours as
 (
 select Employee,Employee_First_Name, Week_starting,Employee_email,
        sum(Submitted_hours+Approved_hours) as EnteredHours,
-       40 - sum(Submitted_hours+Approved_hours) as MissedHours
+       {{var("Weekly_timesheet_Threshold")}} - sum(Submitted_hours+Approved_hours) as MissedHours
        from {{ ref('stg_oa_weeklytimesheets') }}
 group by 1,2,3,4
 having sum(Submitted_hours+Approved_hours) < 40

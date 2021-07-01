@@ -24,7 +24,6 @@ clean-targets:         # directories to be removed by `dbt clean`
     - "target"
     - "dbt_modules"
 
-
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
 
@@ -66,3 +65,5 @@ vars:
                       'Designation_Change_Request',
                       'Intercompany_Transfer',
                       'Reporting_Changes']
+    
+    Weekly_timesheet_Threshold: 40
