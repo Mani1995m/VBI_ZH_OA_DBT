@@ -103,7 +103,15 @@ Remove_null as
 
 Form_Record_id as
 (
-    SELECT {{ dbt_utils.surrogate_key('Employee','Week_starting') }} as Record_id,* 
+    SELECT md5(cast(
+    coalesce(cast(Employee as 
+    varchar
+), '') || '-' || coalesce(cast(Week_starting as 
+    varchar
+), '')
+ as 
+    varchar
+)) as Record_id,* 
     from Remove_null
 ),
 
