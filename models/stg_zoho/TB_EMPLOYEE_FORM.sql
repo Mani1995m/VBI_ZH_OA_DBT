@@ -41,7 +41,13 @@ select
             to_date(SRC:"Date_of_birth"::String , 'DD-Mon-YYYY')
     end
     as date_of_birth,
-    IFNULL(SRC:"Employee_type"::varchar, NULL) as employee_type,
+    case 
+        when length(SRC:"Employee_type") = 0 or SRC:"Employee_type" IS NULL or SRC:"Employee_type" = 'NA' then 
+            'Others'
+        else
+            SRC:"Employee_type"::varchar
+    end
+    as employee_type,
     -- SRC:"Dateofexit",
     case 
         when employee_type = 'Intern' then
