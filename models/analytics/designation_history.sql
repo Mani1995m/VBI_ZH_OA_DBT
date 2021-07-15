@@ -33,10 +33,21 @@ select
         b.first_name ||' '|| b.last_name as employee_name,									
         a.approval_status as designation_change_approval_status,								
         new_designation as designation,											
-        effective_from as valid_from,											
-        coalesce(dateadd(day,-1,lead(effective_from) 
-        over (partition by a.employee_id order by effective_from)),current_date()) as valid_to,
-        iff(datediff(day, current_date(), valid_to) = 0, 'Current',NULL) as current_designation_flag,
+        effective_from as valid_from,
+        case when employee_status = 'Active' then
+             coalesce(dateadd(day,-1,lead(effective_from) 
+             over (partition by a.employee_id order by effective_from)),current_date())
+        else
+             coalesce(dateadd(day,-1,lead(effective_from) 
+             over (partition by a.employee_id order by effective_from)),date_of_exit)
+        end
+        as valid_to,
+        case when employee_status = 'Active' then
+             iff(datediff(day, current_date(), valid_to) = 0, 'Current',NULL)
+        else
+             iff(datediff(day, date_of_exit, valid_to) = 0, 'Inactive',NULL)
+        end
+        as current_designation_flag,
         iff(
             current_designation_flag is not NULL,
             to_number(datediff(month, valid_from, valid_to)/12,5, 1),
@@ -109,12 +120,17 @@ select
         designation,
         date_of_joining as valid_from,
         case when employee_status = 'Active' then
-             current_date
+             current_date()
         else
              date_of_exit
         end
         as valid_to,
-        'Current' as current_designation_flag,
+        case when employee_status = 'Active' then
+             iff(datediff(day, current_date(), valid_to) = 0, 'Current',NULL)
+        else
+             iff(datediff(day, date_of_exit, valid_to) = 0, 'Inactive',NULL)
+        end
+        as current_designation_flag,
         to_number(datediff(month, valid_from, valid_to)/12,5, 1) as current_designation_period,
         datediff(day, valid_from, valid_to) as no_of_days,
         datediff(month, valid_from, valid_to) as no_of_months,
