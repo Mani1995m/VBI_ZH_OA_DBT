@@ -13,8 +13,21 @@ emp as(
     select * from {{  ref('TB_EMPLOYEE_FORM') }}
 )
 
-select * from (													
-    select 														
+select 
+    employee_zoho_id,
+    employee_id,
+    employee_name,
+    designation_change_approval_status,
+    designation,
+    max(valid_from) as valid_from,
+    max(valid_to) as valid_to,
+    max(current_designation_flag) as current_designation_flag,
+    min(current_designation_period) as current_designation_period,
+    min(no_of_days) as no_of_days,
+    min(no_of_months) as no_of_months,
+    min(no_of_years) as no_of_years from 
+    
+    (select 														
         a.employee_id as employee_zoho_id,										
         a.employee as employee_id,											
         b.first_name ||' '|| b.last_name as employee_name,									
@@ -39,9 +52,9 @@ select * from (
             emp b												
             on a.employee_id = b.zoho_id											
 														
-    union all													
+     union all													
     
-    select 														
+     select 														
         employee_zoho_id,												
         a.employee_id,													
         b.first_name ||' '|| b.last_name as employee_name,									
@@ -84,7 +97,36 @@ select * from (
                     left outer join													
                     emp b												
                     on employee_zoho_id = b.zoho_id 											
-                where rec_no =  1)												
-														
-order by employee_id, valid_from											
+                where rec_no =  1	
+        
+     union all
+    
+     select 														
+        a.zoho_id as employee_zoho_id,										
+        a.employee_id,											
+        a.first_name ||' '|| a.last_name as employee_name,
+        'Approved' as designation_change_approval_status,
+        designation,
+        date_of_joining as valid_from,
+        case when employee_status = 'Active' then
+             current_date
+        else
+             date_of_exit
+        end
+        as valid_to,
+        iff(datediff(day, current_date(), valid_to) = 0, 'Current',NULL) as current_designation_flag,
+        iff(
+            current_designation_flag is not NULL,
+            to_number(datediff(month, valid_from, valid_to)/12,5, 1),
+            NULL
+            )
+        as current_designation_period,
+        datediff(day, valid_from, valid_to) as no_of_days,
+        datediff(month, valid_from, valid_to) as no_of_months,
+        to_number(no_of_months/12,5, 1) as no_of_years
+        from emp a 
+   )
+        
+group by employee_zoho_id,employee_id,employee_name,designation_change_approval_status,designation
+order by employee_id,designation												
 
