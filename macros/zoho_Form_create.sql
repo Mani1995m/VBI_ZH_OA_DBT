@@ -18,10 +18,16 @@
         merge into "ZOHO_OA_EDW"."RAW_ZOHO"."TB_HIST_{{form|upper}}" as target using
             (  select 
                 convert_timezone('UTC', current_timestamp(2))::timestamp_ntz as record_captured_at,
-                key as record_id, 
-                value[0] as SRC1 
+                v.key as record_id, 
+                v.value[0] as SRC1 
                from
-                    @STAGE_ZH_HIST_BLOB/{{form}}.json (file_format => FF_JSON_ZOHO) as S, lateral flatten( input => $1 )
+                    @STAGE_ZH_HIST_BLOB/vbidw/zoho/{{form}}/{{form}}.json (file_format => FF_JSON_ZOHO)
+                     as S, 
+                    lateral flatten( input => $1) f,
+                    lateral flatten( input => f.value) t,
+                    lateral flatten( input => t.value) u,
+                    lateral flatten( input => u.value) v
+                    Where t.key = 'result'
             ) as sources on
             sources.record_id = target.record_id 
         when matched then 
