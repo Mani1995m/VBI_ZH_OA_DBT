@@ -12,7 +12,22 @@ proj as(
     select * from {{ref('TB_PROJECT_DEPARTMENT_CHANGES_FORM')}}
 )
 
-Select * from (
+Select 
+        employee, 
+        first_name,
+        last_name,
+        previous_project_department,
+        current_project_department,
+        previous_project,    
+        current_project,
+        max(start_date) as start_date,
+        max(end_date) as end_date, 
+        max(current_proj_flag) as current_proj_flag,
+        min(no_of_days) as no_of_days,
+        min(no_of_months) as no_of_months,
+        min(no_of_years) as no_of_years
+
+from (
     select 
         employee, 
         emp.first_name as first_name,
@@ -87,7 +102,54 @@ Select * from (
                         emp b												
                         on a.employee= b.employee_id											
                     where rec_no =  1
+
+    union all
+
+        select  emp.employee_id, 
+        emp.first_name as first_name,
+        emp.last_name as last_name,
+        null as previous_project_department,
+        emp.department as current_project_department,
+        null as previous_project,    
+        emp.project as current_project,
+        case 
+            when emp.original_doj_for_transfers is not null
+                then emp.original_doj_for_transfers										
+            when emp.date_of_start_of_internship is not null
+                then emp.date_of_start_of_internship
+            when emp.date_of_joining is not null
+                then emp.date_of_joining
+            else 
+                NULL
+        end  as start_date,
+        -- To fetch next row effective date subtract by -1 to set end date of current project record
+        case when emp.employee_status = 'Active' then
+             current_date()
+        else
+             emp.date_of_exit
+        end
+        as end_date, 
+        case when emp.employee_status = 'Active' then
+             iff(datediff(day, current_date(), end_date) = 0, 'Current',NULL)
+        else
+             iff(datediff(day, emp.date_of_exit, end_date) = 0, 'Inactive',NULL)
+        end
+        as current_proj_flag,
+        datediff(day, start_date, end_date) as no_of_days,
+        datediff(month, start_date, end_date) as no_of_months,
+        to_number(no_of_months/12,5, 1) as no_of_years
+
+    from emp
+
     )
     where 
         length(employee) !=0 
+    group by
+        employee, 
+        first_name,
+        last_name,
+        previous_project_department,
+        current_project_department,
+        previous_project,    
+        current_project
     order by employee, start_date 
