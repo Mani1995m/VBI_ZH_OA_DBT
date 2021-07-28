@@ -66,3 +66,7 @@ sources:
     
       - name: TB_HIST_WEEKLY_TIMESHEETS_STATUS
         description: "Weekly TimeSheets Status from SharePoint"
+
+      - name: TB_HIST_MONTHLY_TIMESHEETS
+        description: "Monthly TimeSheets Data from SharePoint"
+
